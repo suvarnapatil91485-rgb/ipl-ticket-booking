@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { supabase } from "../supabase";
 
+
 function Booking() {
-    
+    const location = useLocation();
+const match = location.state;
  const [name, setName] = useState("");
  const [tickets, setTickets] = useState("");
 
@@ -16,14 +20,18 @@ function Booking() {
         return;
     }
 
-    const { data, error } = await supabase
+    const { error } = await supabase
         .from("bookings")
         .insert([
             {
                 name: name,
                 tickets: Number(tickets),
                 stand: stand,
-                venue: venue
+                venue: venue,
+                team1: match?.team1 || "",
+                team2: match?.team2 || "",
+                match_date: match?.date || "",
+                match_time: match?.time || ""
             }
         ]);
 
@@ -40,7 +48,17 @@ function Booking() {
          <main className="booking-page">
 
             <h1>Book Your Ticket</h1>
+                {match && (
+    <div className="selected-match">
+        <h3>
+            {match.team1} vs {match.team2}
+        </h3>
 
+        <p>📍 {match.venue}</p>
+        <p>📅 {match.date}</p>
+        <p>⏰ {match.time}</p>
+    </div>
+        )}
         
 
 
